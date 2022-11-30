@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as authAction from '../../redux/auth/authSlice'
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { userLogin } from '../../services/AuthService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,7 +19,6 @@ const theme = createTheme();
 
 function LoginAdmin() {
     const dispatch = useDispatch();
-    let navigate = useNavigate();
     const [loading, setLoad] = React.useState(false)
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
@@ -35,7 +33,7 @@ function LoginAdmin() {
         if (res.data.success) {
             if (res.data.data.role === 'ROLE_ADMIN' || res.data.data.role === 'ROLE_STAFF') {
                 await dispatch(authAction.login(res.data));
-                navigate('/admin')
+                window.location.href = '/admin'
             } else {
                 toast.error('Sai tài khoản hoặc mật khẩu', {
                     position: "top-right",

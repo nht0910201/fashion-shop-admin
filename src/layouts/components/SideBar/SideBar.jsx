@@ -1,13 +1,11 @@
 import { Avatar, Button, Collapse } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { getUserFromLocalStorage } from "../../../utils/userHanle";
 import * as authAction from '../../../redux/auth/authSlice'
 import { BarChart, BrandingWatermark, Category, Inventory, Person, ReceiptLong } from "@mui/icons-material";
 
 function SideBar() {
     let userCur = getUserFromLocalStorage()
-    let navigate = useNavigate()
     let dispatch = useDispatch()
     const handleProductManage = () => {
         let order = document.getElementById('order')
@@ -100,8 +98,8 @@ function SideBar() {
         brand.setAttribute('hidden', true)
     }
     const handleLogout = () => {
-        navigate('/')
         dispatch(authAction.logout())
+        window.location.href='/'
     }
     return (
         <Collapse.Group css={{ width: '100%'}}>

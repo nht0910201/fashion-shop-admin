@@ -16,6 +16,7 @@ const publicRoutes = [
 
 const privateRoutes = [
     { path: config.routes.admin, component: Admin, layout: AdminLayout },
+    { path: config.routes.loginManage, component: Admin, layout: AdminLayout },
     { path: config.routes.addProduct, component: AddProduct },
     { path: config.routes.updateProduct, component: UpdateProduct },
     { path: config.routes.notFound, component: View404 },

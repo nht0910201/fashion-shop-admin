@@ -160,7 +160,7 @@ export function EditModal({ category }) {
             >
                 <Modal.Header>
                     <Text id="modal-title" size={20} b>
-                        CHÌNH SỬA DANH MỤC
+                        CHỈNH SỬA DANH MỤC
                     </Text>
                 </Modal.Header>
                 <Modal.Body css={{ marginLeft: 'auto', marginRight: 'auto' }}>

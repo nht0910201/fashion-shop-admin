@@ -188,7 +188,7 @@ export function EditModal({ brand }) {
             >
                 <Modal.Header>
                     <Text id="modal-title" size={20} b>
-                        CHÌNH SỬA NHÃN HÀNG
+                        CHỈNH SỬA NHÃN HÀNG
                     </Text>
                 </Modal.Header>
                 <Modal.Body css={{ marginLeft: 'auto', marginRight: 'auto' }}>

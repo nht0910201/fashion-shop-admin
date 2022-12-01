@@ -177,7 +177,7 @@ export function EditModal({ user }) {
             >
                 <Modal.Header>
                     <Text id="modal-title" size={20} b>
-                        CHÌNH SỬA TÀI KHOẢN
+                        CHỈNH SỬA TÀI KHOẢN
                     </Text>
                 </Modal.Header>
                 <Modal.Body css={{ marginLeft: 'auto', marginRight: 'auto' }}>

@@ -21,7 +21,7 @@ function View404() {
                             404
                         </Typography>
                         <Typography variant="h6">
-                            The page you’re looking for doesn’t exist.
+                            Trang truy cập không tồn tại
                         </Typography>
                         <Button variant="contained" onClick={()=>navigate('/admin')}>Back Home</Button>
                     </Grid>

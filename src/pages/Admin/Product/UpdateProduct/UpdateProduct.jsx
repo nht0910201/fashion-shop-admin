@@ -19,7 +19,7 @@ import { getAllCategory } from '../../../../services/CategoryService';
 import { addProductAttrByAdmin, addProductOptionByAdmin, delImagePooductByAdmin, getAllBrandsByAdmin, updateAttrByAdmin, updateProducOptionByAdmin, updateProductByAdmin, uploadImageByAdmin } from '../../../../services/AdminService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProductByID } from '../../../../services/ProductService';
-import { Dropdown, Input, Modal, Row, Table, Text } from '@nextui-org/react';
+import { Dropdown, Input, Loading, Modal, Row, Table, Text } from '@nextui-org/react';
 import { UpdateSuccessReload } from '../../../../components/Alert/UpdateSuccessReload';
 import { UpdateError } from '../../../../components/Alert/UpdateError';
 import ReactQuill from 'react-quill';
@@ -723,232 +723,239 @@ function UpdateProduct() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Grid container>
-                <Grid item xs={12} sm={6}>
-                    <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
-                        <Button onClick={() => navigate('/admin?page=product')}>Về trang quản lý</Button>
-                        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-                            <Typography component="h4" variant="h5" align="center">
-                                THÔNG TIN SẢN PHẨM
-                            </Typography>
-                            <React.Fragment>
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12}>
-                                        <label style={{ fontSize: 12 }}>Tên sản phẩm</label>
-                                        <TextField
-                                            required
-                                            id="name"
-                                            name="name"
-                                            // label="Tên sản phẩm"
-                                            fullWidth
-                                            type={'text'}
-                                            variant="standard"
-                                            value={product.name}
-                                            onChange={handleChangeName}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <label style={{ fontSize: 12 }}>Giá gốc</label>
-                                        <TextField
-                                            required
-                                            id="price"
-                                            name="price"
-                                            // label="Giá sản phẩm"
-                                            fullWidth
-                                            type={'number'}
-                                            variant="standard"
-                                            value={product.price}
-                                            onChange={handleChangePrice}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <label style={{ fontSize: 12 }}>Giảm giá</label>
-                                        <TextField
-                                            required
-                                            id="discount"
-                                            name="discount"
-                                            // label="Giảm giá"
-                                            fullWidth
-                                            type={'number'}
-                                            variant="standard"
-                                            value={product.discount}
-                                            onChange={handleChangeDiscount}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <span style={{ fontSize: 12 }}>Danh mục / Nhãn hàng</span>
-                                        <Dropdown>
-                                            <Dropdown.Button light color="default" css={{ tt: "capitalize" }}>
-                                                {categories.filter((cat) => {
-                                                    return (cat.id === product?.category)
-                                                })[0]?.name || ''}
-                                            </Dropdown.Button>
-                                            <Dropdown.Menu
-                                                aria-label="Single selection actions"
-                                                color="secondary"
-                                                disallowEmptySelection
-                                                selectionMode="single"
-                                                selectedKeys={product.category}
-                                                onAction={(key) => setProduct({ ...product, category: key })}
-                                            >
-                                                {/* <Dropdown.Item key=''>Không</Dropdown.Item> */}
-                                                {categories.map((item) => (
-                                                    <Dropdown.Item key={item.id}>{item.name}</Dropdown.Item>
-                                                ))}
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                        <Dropdown>
-                                            <Dropdown.Button light color="default" css={{ tt: "capitalize" }}>
-                                                {brands.filter((brand) => {
-                                                    return (brand.id === product.brand)
-                                                })[0]?.name || ''}
-                                            </Dropdown.Button>
-                                            <Dropdown.Menu
-                                                aria-label="Single selection actions"
-                                                color="secondary"
-                                                disallowEmptySelection
-                                                selectionMode="single"
-                                                selectedKeys={product.brand}
-                                                onAction={(key) => setProduct({ ...product, brand: key })}
-                                            >
-                                                {/* <Dropdown.Item key=''>Không</Dropdown.Item> */}
-                                                {brands.map((item) => (
-                                                    <Dropdown.Item key={item.id}>{item.name}</Dropdown.Item>
-                                                ))}
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <label style={{ fontSize: 12 }}>Mô tả sản phẩm</label>
-                                        <ReactQuill theme="snow" value={product.description} onChange={handleChangeDes} />
-                                    </Grid>
-                                </Grid>
-                            </React.Fragment>
+            {Object.keys(product).length === 0 && product.constructor === Object ?
+                <Grid container gap={2} justifyContent='center' alignItems={'center'} height={'100vh'} wrap='wrap' >
+                    <Loading size='xl' type='gradient' color={'warning'} />
+                </Grid> :
+                <>
+                    <Grid container>
+                        <Grid item xs={12} sm={6}>
+                            <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+                                <Button onClick={() => navigate('/admin?page=product')}>Về trang quản lý</Button>
+                                <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+                                    <Typography component="h4" variant="h5" align="center">
+                                        THÔNG TIN SẢN PHẨM
+                                    </Typography>
+                                    <React.Fragment>
+                                        <Grid container spacing={3}>
+                                            <Grid item xs={12}>
+                                                <label style={{ fontSize: 12 }}>Tên sản phẩm</label>
+                                                <TextField
+                                                    required
+                                                    id="name"
+                                                    name="name"
+                                                    // label="Tên sản phẩm"
+                                                    fullWidth
+                                                    type={'text'}
+                                                    variant="standard"
+                                                    value={product.name}
+                                                    onChange={handleChangeName}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <label style={{ fontSize: 12 }}>Giá gốc</label>
+                                                <TextField
+                                                    required
+                                                    id="price"
+                                                    name="price"
+                                                    // label="Giá sản phẩm"
+                                                    fullWidth
+                                                    type={'number'}
+                                                    variant="standard"
+                                                    value={product.price}
+                                                    onChange={handleChangePrice}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <label style={{ fontSize: 12 }}>Giảm giá</label>
+                                                <TextField
+                                                    required
+                                                    id="discount"
+                                                    name="discount"
+                                                    // label="Giảm giá"
+                                                    fullWidth
+                                                    type={'number'}
+                                                    variant="standard"
+                                                    value={product.discount}
+                                                    onChange={handleChangeDiscount}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <span style={{ fontSize: 12 }}>Danh mục / Nhãn hàng</span>
+                                                <Dropdown>
+                                                    <Dropdown.Button light color="default" css={{ tt: "capitalize" }}>
+                                                        {categories.filter((cat) => {
+                                                            return (cat.id === product?.category)
+                                                        })[0]?.name || ''}
+                                                    </Dropdown.Button>
+                                                    <Dropdown.Menu
+                                                        aria-label="Single selection actions"
+                                                        color="secondary"
+                                                        disallowEmptySelection
+                                                        selectionMode="single"
+                                                        selectedKeys={product.category}
+                                                        onAction={(key) => setProduct({ ...product, category: key })}
+                                                    >
+                                                        {/* <Dropdown.Item key=''>Không</Dropdown.Item> */}
+                                                        {categories.map((item) => (
+                                                            <Dropdown.Item key={item.id}>{item.name}</Dropdown.Item>
+                                                        ))}
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                                <Dropdown>
+                                                    <Dropdown.Button light color="default" css={{ tt: "capitalize" }}>
+                                                        {brands.filter((brand) => {
+                                                            return (brand.id === product.brand)
+                                                        })[0]?.name || ''}
+                                                    </Dropdown.Button>
+                                                    <Dropdown.Menu
+                                                        aria-label="Single selection actions"
+                                                        color="secondary"
+                                                        disallowEmptySelection
+                                                        selectionMode="single"
+                                                        selectedKeys={product.brand}
+                                                        onAction={(key) => setProduct({ ...product, brand: key })}
+                                                    >
+                                                        {/* <Dropdown.Item key=''>Không</Dropdown.Item> */}
+                                                        {brands.map((item) => (
+                                                            <Dropdown.Item key={item.id}>{item.name}</Dropdown.Item>
+                                                        ))}
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <label style={{ fontSize: 12 }}>Mô tả sản phẩm</label>
+                                                <ReactQuill theme="snow" value={product.description} onChange={handleChangeDes} />
+                                            </Grid>
+                                        </Grid>
+                                    </React.Fragment>
 
-                            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button
-                                    variant="contained"
-                                    sx={{ mt: 3, ml: 1 }}
-                                    onClick={handleSave}
-                                >
-                                    Lưu
-                                </Button>
-                            </Box>
-                        </Paper>
-                        <ToastContainer />
-                    </Container>
-                </Grid>
-                <Grid item xs={12} sm={6} sx={{ marginRight: 0 }}>
-                    <Row justify='space-between' align='center' css={{ marginTop: '$15' }}>
-                        <Typography variant="h5" style={{ textAlign: 'center' }} gutterBottom>
-                            CÁC PHIÊN BẢN
-                        </Typography>
-                        <AddOptionModal productId={productId} />
-                    </Row>
+                                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <Button
+                                            variant="contained"
+                                            sx={{ mt: 3, ml: 1 }}
+                                            onClick={handleSave}
+                                        >
+                                            Lưu
+                                        </Button>
+                                    </Box>
+                                </Paper>
+                                <ToastContainer />
+                            </Container>
+                        </Grid>
+                        <Grid item xs={12} sm={6} sx={{ marginRight: 0 }}>
+                            <Row justify='space-between' align='center' css={{ marginTop: '$15' }}>
+                                <Typography variant="h5" style={{ textAlign: 'center' }} gutterBottom>
+                                    CÁC PHIÊN BẢN
+                                </Typography>
+                                <AddOptionModal productId={productId} />
+                            </Row>
 
-                    <Table
-                        shadow={'false'}
-                        aria-label="Example table with static content"
-                        css={{
-                            height: "auto",
-                            minWidth: "100%",
-                        }}
-                    >
-                        <Table.Header>
-                            <Table.Column>SIZE</Table.Column>
-                            <Table.Column>MÀU</Table.Column>
-                            <Table.Column>PHÍ THÊM</Table.Column>
-                            <Table.Column>SỐ LƯỢNG</Table.Column>
-                            <Table.Column></Table.Column>
-                        </Table.Header>
-                        <Table.Body>
-                            {product.options?.map((option) => (
-                                <Table.Row key={option.id}>
-                                    <Table.Cell>{option.name}</Table.Cell>
-                                    <Table.Cell css={{ justifyContent: 'flex-start', paddingRight: '$0', paddingLeft: '$0' }}>
-                                        {option.variants.map((color) => (
-                                            <Button size='small' disabled sx={{ padding: 0, margin: 0 }}>
-                                                <span style={{ backgroundColor: color.color, padding: 10, border: '1px solid black' }}>
-                                                </span>
-                                            </Button>
-                                        ))}
-                                    </Table.Cell>
-                                    <Table.Cell>{option.extraFee}</Table.Cell>
-                                    <Table.Cell>{option.inStock}</Table.Cell>
-                                    <Table.Cell>
-                                        <Row justify='center'>
-                                            <EditOptionModal option={option} productId={productId} />
-                                        </Row>
-                                    </Table.Cell>
-                                </Table.Row>
-                            ))}
-                        </Table.Body>
-                    </Table>
-                    <Row justify='space-between' align='center'>
-                        <Typography variant="h5" style={{ textAlign: 'center', marginTop: 20 }} gutterBottom>
-                            CÁC THÔNG SỐ
-                        </Typography>
-                        <AddAttrModal productId={productId} />
-                    </Row>
-                    <Table
-                        shadow={'false'}
-                        aria-label="Example table with static content"
-                        css={{
-                            height: "auto",
-                            minWidth: "100%",
-                        }}
-                    >
-                        <Table.Header>
-                            <Table.Column>STT</Table.Column>
-                            <Table.Column>THÔNG SỐ</Table.Column>
-                            <Table.Column>GIÁ TRỊ</Table.Column>
-                            <Table.Column></Table.Column>
-                        </Table.Header>
-                        <Table.Body>
-                            {product.attr?.map((prop, index) => (
-                                <Table.Row key={prop.id}>
-                                    <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell>{prop.name}</Table.Cell>
-                                    <Table.Cell>{prop.val}</Table.Cell>
-                                    <Table.Cell>
-                                        <Row justify='center'>
-                                            <EditAttrModal attr={prop} productId={productId} />
-                                        </Row>
-                                    </Table.Cell>
-                                </Table.Row>
-                            ))}
-                        </Table.Body>
-                    </Table>
-                </Grid>
-            </Grid>
-            <Grid container>
-                <Grid item xs={12}>
-                    <Row justify='space-around' align='center'>
-                        <Typography variant="h5" style={{ textAlign: 'center', marginTop: 20 }} gutterBottom>
-                            ẢNH SẢN PHẨM
-                        </Typography>
-                        {product.id !== undefined ?
-                            <UploadImage pro={product} />
-                            :
-                            <></>
-                        }
-                    </Row>
-                    <ImageList sx={{ width: 'auto', height: 'auto', margin: 5 }} gap={15} cols={4} rowHeight={164} variant='quilted'>
-                        {product.images?.map((image) => (
-                            <ImageListItem key={image.imageId}>
-                                <button onClick={() => { removeImage({ imageId: image.imageId }, productId) }}>
-                                    <DeleteForever />
-                                </button>
-                                <img
-                                    src={image.url}
-                                    alt={'...Loading'}
-                                    loading="lazy"
-                                />
-                            </ImageListItem>
-                        ))}
-                    </ImageList>
-                </Grid>
-            </Grid>
+                            <Table
+                                shadow={'false'}
+                                aria-label="Example table with static content"
+                                css={{
+                                    height: "auto",
+                                    minWidth: "100%",
+                                }}
+                            >
+                                <Table.Header>
+                                    <Table.Column>SIZE</Table.Column>
+                                    <Table.Column>MÀU</Table.Column>
+                                    <Table.Column>PHÍ THÊM</Table.Column>
+                                    <Table.Column>SỐ LƯỢNG</Table.Column>
+                                    <Table.Column></Table.Column>
+                                </Table.Header>
+                                <Table.Body>
+                                    {product.options?.map((option) => (
+                                        <Table.Row key={option.id}>
+                                            <Table.Cell>{option.name}</Table.Cell>
+                                            <Table.Cell css={{ justifyContent: 'flex-start', paddingRight: '$0', paddingLeft: '$0' }}>
+                                                {option.variants.map((color) => (
+                                                    <Button size='small' disabled sx={{ padding: 0, margin: 0 }}>
+                                                        <span style={{ backgroundColor: color.color, padding: 10, border: '1px solid black' }}>
+                                                        </span>
+                                                    </Button>
+                                                ))}
+                                            </Table.Cell>
+                                            <Table.Cell>{option.extraFee}</Table.Cell>
+                                            <Table.Cell>{option.inStock}</Table.Cell>
+                                            <Table.Cell>
+                                                <Row justify='center'>
+                                                    <EditOptionModal option={option} productId={productId} />
+                                                </Row>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                            <Row justify='space-between' align='center'>
+                                <Typography variant="h5" style={{ textAlign: 'center', marginTop: 20 }} gutterBottom>
+                                    CÁC THÔNG SỐ
+                                </Typography>
+                                <AddAttrModal productId={productId} />
+                            </Row>
+                            <Table
+                                shadow={'false'}
+                                aria-label="Example table with static content"
+                                css={{
+                                    height: "auto",
+                                    minWidth: "100%",
+                                }}
+                            >
+                                <Table.Header>
+                                    <Table.Column>STT</Table.Column>
+                                    <Table.Column>THÔNG SỐ</Table.Column>
+                                    <Table.Column>GIÁ TRỊ</Table.Column>
+                                    <Table.Column></Table.Column>
+                                </Table.Header>
+                                <Table.Body>
+                                    {product.attr?.map((prop, index) => (
+                                        <Table.Row key={prop.id}>
+                                            <Table.Cell>{index + 1}</Table.Cell>
+                                            <Table.Cell>{prop.name}</Table.Cell>
+                                            <Table.Cell>{prop.val}</Table.Cell>
+                                            <Table.Cell>
+                                                <Row justify='center'>
+                                                    <EditAttrModal attr={prop} productId={productId} />
+                                                </Row>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                        </Grid>
+                    </Grid>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Row justify='space-around' align='center'>
+                                <Typography variant="h5" style={{ textAlign: 'center', marginTop: 20 }} gutterBottom>
+                                    ẢNH SẢN PHẨM
+                                </Typography>
+                                {product.id !== undefined ?
+                                    <UploadImage pro={product} />
+                                    :
+                                    <></>
+                                }
+                            </Row>
+                            <ImageList sx={{ width: 'auto', height: 'auto', margin: 5 }} gap={15} cols={4} rowHeight={164} variant='quilted'>
+                                {product.images?.map((image) => (
+                                    <ImageListItem key={image.imageId}>
+                                        <button onClick={() => { removeImage({ imageId: image.imageId }, productId) }}>
+                                            <DeleteForever />
+                                        </button>
+                                        <img
+                                            src={image.url}
+                                            alt={'...Loading'}
+                                            loading="lazy"
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        </Grid>
+                    </Grid>
+                </>
+            }
             <ToastContainer />
         </ThemeProvider >
     );

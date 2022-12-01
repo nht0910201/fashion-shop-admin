@@ -236,7 +236,7 @@ function TableUser({ users, show }) {
                         target="_blank"
                         style={{marginRight:10}}
                     >
-                        In file CSV
+                        Xuất CSV
                     </CSVLink>
                     <AddModal/>
                 </div>

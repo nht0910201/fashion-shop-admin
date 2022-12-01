@@ -218,7 +218,7 @@ function TableCategories({ categories, show }) {
                         target="_blank"
                         style={{ marginRight: 10 }}
                     >
-                        Export CSV
+                        Xuất CSV
                     </CSVLink>
                     <AddModal categories={categories} />
                 </div>

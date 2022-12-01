@@ -110,7 +110,7 @@ function TableProduct({ products,show }) {
                         target="_blank"
                         style={{marginRight:10}}
                     >
-                        In file CSV
+                        Xuất CSV
                     </CSVLink>
                     <Button auto ghost color={'warning'} onClick={()=>navigate('/admin/addProduct')}>Thêm sản phẩm</Button>
                 </div>

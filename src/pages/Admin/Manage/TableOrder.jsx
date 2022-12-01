@@ -320,7 +320,7 @@ function TableOrder({ orders, show }) {
                     className="btn btn-primary"
                     target="_blank"
                 >
-                    In file CSV
+                    Xuất CSV
                 </CSVLink>
             </Row>
             <Table

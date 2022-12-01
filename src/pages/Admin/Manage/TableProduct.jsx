@@ -110,7 +110,7 @@ function TableProduct({ products,show }) {
                         target="_blank"
                         style={{marginRight:10}}
                     >
-                        Export CSV
+                        In file CSV
                     </CSVLink>
                     <Button auto ghost color={'warning'} onClick={()=>navigate('/admin/addProduct')}>Thêm sản phẩm</Button>
                 </div>
@@ -118,7 +118,7 @@ function TableProduct({ products,show }) {
             <Table
                 bordered
                 shadow={false}
-                color="primary"
+                color={'warning'}
                 aria-label="Orders table"
                 css={{
                     height: "calc($space$14 * 10)",

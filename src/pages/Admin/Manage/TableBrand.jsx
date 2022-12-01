@@ -266,17 +266,20 @@ function TableBrand({ brands, show }) {
                         target="_blank"
                         style={{ marginRight: 10 }}
                     >
-                        Export CSV
+                        In file CSV
                     </CSVLink>
                     <AddModal />
                 </div>
             </Row>
             <Table
+                bordered
+                shadow={false}
                 aria-label='Table Brand'
                 css={{
                     height: "calc($space$14 * 10)",
                     minWidth: "100%",
                 }}
+                color={'warning'}
                 selectionMode={'single'}
                 sortDescriptor={list.sortDescriptor}
                 onSortChange={list.sort}

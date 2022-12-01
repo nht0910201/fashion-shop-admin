@@ -236,7 +236,7 @@ function TableUser({ users, show }) {
                         target="_blank"
                         style={{marginRight:10}}
                     >
-                        Export CSV
+                        In file CSV
                     </CSVLink>
                     <AddModal/>
                 </div>
@@ -244,7 +244,7 @@ function TableUser({ users, show }) {
             <Table
                 bordered
                 shadow={false}
-                color="primary"
+                color={'warning'}
                 aria-label="Users table"
                 css={{
                     height: "calc($space$14 * 10)",

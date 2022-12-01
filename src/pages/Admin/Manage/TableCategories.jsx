@@ -226,12 +226,12 @@ function TableCategories({ categories, show }) {
             <Table
                 bordered
                 shadow={false}
-                color="primary"
                 aria-label="Categories table"
                 css={{
                     height: "calc($space$14 * 10)",
                     minWidth: "100%",
                 }}
+                color={'warning'}
                 selectionMode="single"
                 sortDescriptor={list.sortDescriptor}
                 onSortChange={list.sort}
@@ -246,7 +246,7 @@ function TableCategories({ categories, show }) {
                     {(item) => (
                         <Table.Row key={item.id}>
                             <Table.Cell css={{ d: 'flex', justifyContent: 'center', h: '100%', alignItems: 'center' }}>{item.name}</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{item.root ? <CheckOutlined sx={{ verticalAlign: 'unset' }} /> : ''}</Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>{item.root ? <CheckOutlined sx={{ verticalAlign: 'unset' }} /> : ''}</Table.Cell>
                             <Table.Cell css={{ d: 'flex', justifyContent: 'center', h: '100%', alignItems: 'center' }} >
                                 <StyledBadge type={item.state}>{state[item.state]}</StyledBadge>
                             </Table.Cell>

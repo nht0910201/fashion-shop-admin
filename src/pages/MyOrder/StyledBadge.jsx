@@ -32,7 +32,7 @@ export const StyledBadge = styled('span', {
         bg: '$errorLight',
         color: '$errorLightContrast'
       },
-      unverify: {
+      unverified: {
         bg: '$neutralLight',
         color: '$neutralLightContrast'
       },

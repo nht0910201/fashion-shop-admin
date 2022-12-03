@@ -1,5 +1,5 @@
-import { Edit } from '@mui/icons-material';
-import { Button, Row, Table, User, Modal, Text, Radio, Input, useAsyncList, useCollator } from '@nextui-org/react'
+import { Edit, FilterAlt } from '@mui/icons-material';
+import { Button, Row, Table, User, Modal, Text, Radio, Input, useAsyncList, useCollator, Popover, Grid, Checkbox } from '@nextui-org/react'
 import { useState } from 'react';
 import { addUserByAdmin, updateUserByAdmin } from '../../../services/AdminService';
 import { ToastContainer, toast } from 'react-toastify';
@@ -9,6 +9,9 @@ import { UpdateSuccessNavigate } from '../../../components/Alert/UpdateSuccessNa
 import { StyledBadge } from '../../MyOrder/StyledBadge';
 import { CSVLink } from "react-csv";
 import validator from 'validator';
+import { filter } from 'smart-array-filter'
+import { useEffect } from 'react';
+import { Button as Button2 } from '@mui/material'
 
 export function AddModal() {
     const [name, setName] = useState('');
@@ -37,7 +40,7 @@ export function AddModal() {
         setRole(e)
     }
     const adduser = async ({ name, email, password, phone, province, district, ward, address, gender, role }) => {
-        if(validator.isEmpty(name)){
+        if (validator.isEmpty(name)) {
             toast.error('Vui lòng nhập tên người dùng', {
                 position: "top-right",
                 autoClose: 3000,
@@ -48,7 +51,7 @@ export function AddModal() {
                 progress: undefined,
             });
         }
-        else if(!validator.isEmail(email)){
+        else if (!validator.isEmail(email)) {
             toast.error('Email sai định dạng. Vui lòng nhập lại', {
                 position: "top-right",
                 autoClose: 3000,
@@ -59,7 +62,7 @@ export function AddModal() {
                 progress: undefined,
             });
         }
-        else if(validator.isEmpty(password)){
+        else if (validator.isEmpty(password)) {
             toast.error('Vui lòng nhập mật khẩu', {
                 position: "top-right",
                 autoClose: 3000,
@@ -70,7 +73,7 @@ export function AddModal() {
                 progress: undefined,
             });
         }
-        else if(password.length < 8){
+        else if (password.length < 8) {
             toast.error('Vui lòng nhập mật khẩu có ít nhất 8 kí tự', {
                 position: "top-right",
                 autoClose: 3000,
@@ -81,7 +84,7 @@ export function AddModal() {
                 progress: undefined,
             });
         }
-        else{
+        else {
             const wait = toast.loading("Vui lòng chờ ...")
             let res = await addUserByAdmin({ name, email, password, phone, province, district, ward, address, gender, role })
             if (res.data.success) {
@@ -89,7 +92,7 @@ export function AddModal() {
             } else {
                 UpdateError(wait, 'Thêm tài khoản thất bại')
             }
-        }  
+        }
     }
     let phone = '0909090909'
     let province = 0
@@ -120,7 +123,7 @@ export function AddModal() {
                     <Input size='lg' placeholder="Tên người dùng" type={'text'} value={name} onChange={handleChangeName} />
                     <Input size='lg' placeholder="Email" type={'email'} value={email} onChange={handleChangeEmail} />
                     <Input size='lg' placeholder="Mật khẩu" type={'password'} value={password} onChange={handleChangePass} />
-                    <Radio.Group label="Role" orientation='horizontal' value={role} onChange={handleChangeRole}>
+                    <Radio.Group label="Phân quyền" orientation='horizontal' value={role} onChange={handleChangeRole}>
                         <Radio value="ROLE_STAFF">Nhân viên</Radio>
                         <Radio value="ROLE_USER">Khách hàng</Radio>
                     </Radio.Group>
@@ -201,10 +204,34 @@ export function EditModal({ user }) {
 }
 
 function TableUser({ users, show }) {
+    const usersFilter = users.list.filter((user) => {
+        return user.role !== 'ROLE_ADMIN'
+    })
     const collator = useCollator({ numeric: true });
-    async function load() {
-        return { items: users.list }
+    const [userList, setList] = useState(usersFilter)
+    const [filAcc, setFilAcc] = useState([])
+    const handleChangeFilAcc = (e) => {
+        setFilAcc(e)
     }
+    const filterAccount = async () => {
+        let arr = usersFilter
+        if (filAcc.length > 0) {
+            arr = filter(arr, {
+                keywords: `state:=${filAcc}`
+            })
+            if (arr.length >= 0) {
+                setList(arr)
+            }
+        }
+    }
+    const resetFilter = async () => {
+        setFilAcc([])
+        setList(usersFilter)
+    }
+    async function load() {
+        return { items: userList }
+    }
+
     async function sort({ items, sortDescriptor }) {
         return {
             items: items.sort((a, b) => {
@@ -218,29 +245,95 @@ function TableUser({ users, show }) {
             }),
         };
     }
-    const list = useAsyncList({ load, sort });
+    let list = useAsyncList({ load, sort });
+    useEffect(() => {
+        list.reload()
+    }, [userList])
     const state = {
         activated: 'Hiển thị',
         deactivated: 'Vô hiệu hóa',
-        unverify: 'Chưa xác nhận',
+        unverified: 'Chưa xác nhận',
+    };
+    const role = {
+        ROLE_ADMIN: 'Quản trị viên',
+        ROLE_STAFF: 'Nhân viên',
+        ROLE_USER: 'Khách hàng',
     };
     return (
         <div id='user' hidden={show}>
             <Row justify='space-between' align='center' css={{ marginTop: '$5', marginBottom: '$5' }}>
                 <Text b size={20}>TÀI KHOẢN</Text>
-                <div style={{display:'flex',alignItems:'center'}}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                     <CSVLink
                         data={users.list}
                         filename={"users.csv"}
                         className="btn btn-primary"
                         target="_blank"
-                        style={{marginRight:10}}
+                        style={{ marginRight: 10 }}
                     >
                         Xuất CSV
                     </CSVLink>
-                    <AddModal/>
+                    <AddModal />
                 </div>
             </Row>
+            <Row justify='space-between' align='center' css={{ marginBottom: '$4' }}>
+                <Popover placement='bottom-left'>
+                    <Popover.Trigger>
+                        <Button auto light animated={false}>
+                            Lọc tài khoản
+                            <FilterAlt />
+                        </Button>
+                    </Popover.Trigger>
+                    <Popover.Content css={{ marginRight: '$0', width: '50%' }}>
+                        <Grid.Container
+                            css={{ borderRadius: "14px", padding: "$10" }}
+                        >
+                            <Row>
+                                <Checkbox.Group
+                                    label="Chọn trạng thái"
+                                    orientation="horizontal"
+                                    color="warning"
+                                    value={filAcc}
+                                    onChange={handleChangeFilAcc}
+                                >
+                                    <Checkbox css={{ textAlign: 'center' }} value="activated">Hiển thị</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="deactivated">Vô hiệu hoá</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="unverified">Chưa xác thực</Checkbox>
+                                </Checkbox.Group>
+                            </Row>
+                            <Grid.Container justify="flex-end" alignContent="center" gap={1}>
+                                <Grid>
+                                    <Button size="sm" color="warning" onClick={filterAccount}>
+                                        Xem kết quả
+                                    </Button>
+
+                                </Grid>
+                                <Grid>
+                                    <Button size="sm" bordered color={'error'} onClick={resetFilter}>
+                                        Xoá bộ lọc
+                                    </Button>
+                                </Grid>
+                            </Grid.Container>
+
+                        </Grid.Container>
+                    </Popover.Content>
+                </Popover>
+                <Row justify='flex-end' align='center'>
+                    {filAcc.length > 0 ?
+                        <>
+                            <Text size={'$lg'} css={{ marginRight: '$2' }}>Lọc theo trạng thái: </Text>
+                            {filAcc.map((state) => (
+                                <Button2 variant="outlined" color='inherit'>
+                                    {state === 'activated' ? "Kích hoạt" : state === 'deactivated' ? 'Vô hiệu hoá' : 'Chưa xác thực'}
+                                </Button2>
+                            ))}
+                        </>
+                        :
+                        <></>
+                    }
+                </Row>
+            </Row>
+
             <Table
                 bordered
                 shadow={false}
@@ -272,20 +365,22 @@ function TableUser({ users, show }) {
                                     name={item.name}
                                 />
                             </Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{item.email}</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{item.phone}</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{item.role}</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>
+                            <Table.Cell css={{ textAlign: 'center' }}>{item.email}</Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>{item.phone}</Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>
+                                {role[item.role]}
+                            </Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>
                                 <StyledBadge type={item.state}>{state[item.state]}</StyledBadge>
                             </Table.Cell>
-                            <Table.Cell css={{d:'flex',justifyContent:'center',h:'100%',alignItems:'center'}}>
+                            <Table.Cell css={{ d: 'flex', justifyContent: 'center', h: '100%', alignItems: 'center' }}>
                                 <EditModal user={item} />
                             </Table.Cell>
                         </Table.Row>
                     )}
                 </Table.Body>
                 <Table.Pagination
-                    total={Math.ceil(users.totalQuantity / 5)}
+                    total={Math.ceil(userList.length / 5)}
                     loop
                     shadow
                     noMargin

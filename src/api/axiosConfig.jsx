@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_ADDRESS, API_HOST, SHOP_ID, TOKEN_API_ADDRESS } from '../common/const';
+import { API_ADDRESS, API_HOST, API_LOCAL, SHOP_ID, TOKEN_API_ADDRESS } from '../common/const';
 import { getFromLocalStorage } from '../utils/tokenHandle';
 
 const axiosConfig = axios.create({

@@ -15,7 +15,6 @@ import {
 
 
 function Statistic({ stats, show }) {
-    console.log(stats)
     const formatPrice = (value) =>
         new Intl.NumberFormat('vi-VN', {
             style: 'currency',
@@ -89,7 +88,8 @@ function Statistic({ stats, show }) {
                                                 state.state === 'delivery' ? 'Đang giao: ' :
                                                     state.state === 'done' ? 'Hoàn thành: ' : 
                                                         state.state ==='pending' ? 'Chờ xác nhận: ':
-                                                            'Đã huỷ: '}
+                                                            state.state ==='process' ? 'Đang xử lý: ':
+                                                                'Đã huỷ: '}
                                         </Text>
                                         <Text size={'$md'}>{state.count} (đơn hàng)</Text>
                                     </Row>

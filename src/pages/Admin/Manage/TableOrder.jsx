@@ -1,12 +1,14 @@
-import { Visibility } from '@mui/icons-material';
+import { FilterAlt, Visibility } from '@mui/icons-material';
 import {
     Button,
+    Checkbox,
     Col,
     Divider,
     Grid,
     Image,
     Loading,
     Modal,
+    Popover,
     Row,
     Table,
     Text,
@@ -23,6 +25,8 @@ import { UpdateSuccessNavigate } from '../../../components/Alert/UpdateSuccessNa
 import { UpdateError } from '../../../components/Alert/UpdateError';
 import { StyledBadge } from '../../MyOrder/StyledBadge';
 import { CSVLink } from "react-csv";
+import {Button as Button2} from '@mui/material'
+import { filter } from 'smart-array-filter'
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -278,8 +282,28 @@ export function OrderModal({ orderId }) {
 }
 function TableOrder({ orders, show }) {
     const collator = useCollator({ numeric: true });
+    const [orderList, setList] = useState(orders.list)
+    const [filOrder, setFilOrder] = useState([])
+    const handleChangeFilOrder = (e) => {
+        setFilOrder(e)
+    }
+    const filterOrder = async () => {
+        let arr = orders.list
+        if (filOrder.length > 0) {
+            arr = filter(arr, {
+                keywords: `state:=${filOrder}`
+            })
+            if (arr.length >= 0) {
+                setList(arr)
+            }
+        }
+    }
+    const resetFilter = async () => {
+        setFilOrder([])
+        setList(orders.list)
+    }
     async function load() {
-        return { items: orders.list };
+        return { items: orderList};
     }
     async function sort({ items, sortDescriptor }) {
         return {
@@ -294,7 +318,10 @@ function TableOrder({ orders, show }) {
             }),
         };
     }
-    const list = useAsyncList({ load, sort });
+    let list = useAsyncList({ load, sort });
+    useEffect(() => {
+        list.reload()
+    }, [orderList])
     const formatPrice = (value) =>
         new Intl.NumberFormat('vi-VN', {
             style: 'currency',
@@ -323,6 +350,71 @@ function TableOrder({ orders, show }) {
                     Xuất CSV
                 </CSVLink>
             </Row>
+            <Row justify='space-between' align='center' css={{marginBottom:'$4'}}>
+                <Popover placement='bottom-left'>
+                    <Popover.Trigger>
+                    <Button auto light animated={false}>
+                            Lọc đơn hàng
+                            <FilterAlt/>
+                        </Button>
+                    </Popover.Trigger>
+                    <Popover.Content css={{ marginRight: '$0', width: '75%' }}>
+                        <Grid.Container
+                            css={{ borderRadius: "14px", padding: "$10" }}
+                        >
+                            <Row>
+                                <Checkbox.Group
+                                    label="Chọn trạng thái"
+                                    orientation="horizontal"
+                                    color="warning"
+                                    value={filOrder}
+                                    onChange={handleChangeFilOrder}
+                                >
+                                    <Checkbox css={{ textAlign: 'center' }} value="enable">Hiển thị</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="done">Hoàn tất</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="process">Đang xử lý</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="pending">Đang chờ xác nhận</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="delivery">Đang giao hàng</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="cancel">Đã hủy</Checkbox>
+                                </Checkbox.Group>
+                            </Row>
+                            <Grid.Container justify="flex-end" alignContent="center" gap={1}>
+                                <Grid>
+                                    <Button size="sm" color="warning" onClick={filterOrder}>
+                                        Xem kết quả
+                                    </Button>
+
+                                </Grid>
+                                <Grid>
+                                    <Button size="sm" bordered color={'error'} onClick={resetFilter}>
+                                        Xoá bộ lọc
+                                    </Button>
+                                </Grid>
+                            </Grid.Container>
+
+                        </Grid.Container>
+                    </Popover.Content>
+                </Popover>
+                <Row justify='flex-end' align='center'>
+                    {filOrder.length > 0 ?
+                        <>
+                            <Text size={'$lg'} css={{marginRight:'$2'}}>Lọc theo trạng thái: </Text>
+                            {filOrder.map((state) => (
+                                <Button2 variant="outlined" color='inherit'>
+                                    {state === 'enable' ? 'Hiện tại':
+                                        state === 'done' ? 'Hoàn tất':
+                                            state === 'process' ? 'Đang xử lý':
+                                                state === 'pending' ? 'Đang chờ xác nhận':
+                                                    state ==='delivery'?'Đang giao hàng':
+                                                        'Đã huỷ'}
+                                </Button2>
+                            ))}
+                        </>
+                        :
+                        <></>
+                    }
+                </Row>
+            </Row>
             <Table
                 bordered
                 shadow={false}
@@ -338,6 +430,7 @@ function TableOrder({ orders, show }) {
             >
                 <Table.Header>
                     <Table.Column>MÃ ĐƠN HÀNG</Table.Column>
+                    <Table.Column align='center' key={'createdDate'} allowsSorting>NGÀY ĐẶT*</Table.Column>
                     <Table.Column align="center" key={'userName'} allowsSorting>
                         NGƯỜI ĐẶT*
                     </Table.Column>
@@ -357,6 +450,7 @@ function TableOrder({ orders, show }) {
                     {(order) => (
                         <Table.Row key={order.id}>
                             <Table.Cell>{order.id}</Table.Cell>
+                            <Table.Cell css={{textAlign:'center'}}>{order.createdDate}</Table.Cell>
                             <Table.Cell css={{textAlign:'center'}}>{order.userName}</Table.Cell>
                             <Table.Cell css={{textAlign:'center'}}>{order.totalProduct}</Table.Cell>
                             <Table.Cell css={{textAlign:'center'}}>{formatPrice(order.totalPrice)}</Table.Cell>
@@ -370,7 +464,7 @@ function TableOrder({ orders, show }) {
                     )}
                 </Table.Body>
                 <Table.Pagination
-                    total={Math.ceil(orders.totalQuantity / 5)}
+                    total={Math.ceil(orderList.length / 5)}
                     shadow
                     noMargin
                     align="center"

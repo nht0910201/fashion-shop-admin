@@ -1,6 +1,6 @@
-import { CheckOutlined, Edit } from '@mui/icons-material';
-import { Button, Row, Table, Text, Radio, Modal, Input, Dropdown, useAsyncList, useCollator } from '@nextui-org/react'
-import { useState } from 'react';
+import { CheckOutlined, Edit, FilterAlt } from '@mui/icons-material';
+import { Button, Row, Table, Text, Radio, Modal, Input, Dropdown, useAsyncList, useCollator, Popover, Checkbox, Grid } from '@nextui-org/react'
+import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { addCategoryByAdmin, updateCategoryByAdmin } from '../../../services/AdminService';
@@ -9,6 +9,8 @@ import { UpdateSuccessNavigate } from '../../../components/Alert/UpdateSuccessNa
 import { StyledBadge } from '../../MyOrder/StyledBadge';
 import { CSVLink } from "react-csv";
 import validator from 'validator';
+import { Button as Button2 } from '@mui/material'
+import { filter } from 'smart-array-filter'
 
 export function AddModal({ categories }) {
     const root = categories.filter((category) => {
@@ -185,8 +187,28 @@ export function EditModal({ category }) {
 }
 function TableCategories({ categories, show }) {
     const collator = useCollator({ numeric: true });
+    const [catList, setList] = useState(categories)
+    const [filCat, setFilCat] = useState([])
+    const handleChangeFilCat = (e) => {
+        setFilCat(e)
+    }
+    const filterCategories = async () => {
+        let arr = categories
+        if (filCat.length > 0) {
+            arr = filter(arr, {
+                keywords: `state:=${filCat}`
+            })
+            if (arr.length >= 0) {
+                setList(arr)
+            }
+        }
+    }
+    const resetFilter = async () => {
+        setFilCat([])
+        setList(categories)
+    }
     async function load() {
-        return { items: categories }
+        return { items: catList }
     }
     async function sort({ items, sortDescriptor }) {
         return {
@@ -201,7 +223,10 @@ function TableCategories({ categories, show }) {
             }),
         };
     }
-    const list = useAsyncList({ load, sort });
+    let list = useAsyncList({ load, sort });
+    useEffect(() => {
+        list.reload()
+    }, [catList])
     const state = {
         enable: 'Hiển thị',
         disable: 'Vô hiệu hóa',
@@ -222,6 +247,66 @@ function TableCategories({ categories, show }) {
                     </CSVLink>
                     <AddModal categories={categories} />
                 </div>
+            </Row>
+            <Row justify='space-between' align='center' css={{ marginBottom: '$4' }}>
+                <Popover placement='bottom-left'>
+                    <Popover.Trigger>
+                        <Button auto light animated={false}>
+                            Lọc danh mục
+                            <FilterAlt />
+                        </Button>
+                    </Popover.Trigger>
+                    <Popover.Content css={{ marginRight: '$0', width: '50%' }}>
+                        <Grid.Container
+                            css={{ borderRadius: "14px", padding: "$10" }}
+                        >
+                            <Row>
+                                <Checkbox.Group
+                                    label="Chọn trạng thái"
+                                    orientation="horizontal"
+                                    color="warning"
+                                    value={filCat}
+                                    onChange={handleChangeFilCat}
+                                >
+                                    <Checkbox css={{ textAlign: 'center' }} value="enable">Hiển thị</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="disable">Vô hiệu hoá</Checkbox>
+                                </Checkbox.Group>
+                            </Row>
+                            <Grid.Container justify="flex-end" alignContent="center" gap={1}>
+                                <Grid>
+                                    <Button size="sm" color="warning" onClick={filterCategories}>
+                                        Xem kết quả
+                                    </Button>
+
+                                </Grid>
+                                <Grid>
+                                    <Button size="sm" bordered color={'error'} onClick={resetFilter}>
+                                        Xoá bộ lọc
+                                    </Button>
+                                </Grid>
+                            </Grid.Container>
+
+                        </Grid.Container>
+                    </Popover.Content>
+                </Popover>
+                <Row justify='flex-end' align='center'>
+                    {filCat.length > 0 ?
+                        <>
+                            <Text size={'$lg'} css={{ marginRight: '$2' }}>Lọc theo trạng thái: </Text>
+                            {filCat.map((state) => (
+                                <Button2 variant="outlined" color='inherit'>
+                                    {state === 'enable' ? "Hiển thị" :
+                                        state === 'disable' ? 'Vô hiệu hoá' :
+                                            state === true ? 'Danh mục gốc' :
+                                                'Danh mục thường'
+                                    }
+                                </Button2>
+                            ))}
+                        </>
+                        :
+                        <></>
+                    }
+                </Row>
             </Row>
             <Table
                 bordered
@@ -257,7 +342,7 @@ function TableCategories({ categories, show }) {
                     )}
                 </Table.Body>
                 <Table.Pagination
-                    total={Math.ceil(categories.length / 4)}
+                    total={Math.ceil(catList.length / 4)}
                     loop
                     shadow
                     noMargin

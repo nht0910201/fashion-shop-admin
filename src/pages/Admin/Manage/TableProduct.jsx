@@ -1,6 +1,6 @@
-import { DeleteForever, Edit } from "@mui/icons-material";
-import { Button, Modal, Radio, Row, Table, Text, useAsyncList, useCollator, User } from "@nextui-org/react";
-import { useState } from "react";
+import { DeleteForever, Edit, FilterAlt } from "@mui/icons-material";
+import { Button, Checkbox, Grid, Modal, Popover, Radio, Row, Table, Text, useAsyncList, useCollator, User } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,6 +9,8 @@ import { UpdateSuccessNavigate } from "../../../components/Alert/UpdateSuccessNa
 import { updateProductByAdmin } from "../../../services/AdminService";
 import { StyledBadge } from "../../MyOrder/StyledBadge";
 import { CSVLink } from "react-csv";
+import { Button as Button2 } from '@mui/material'
+import { filter } from 'smart-array-filter'
 
 export function RemoveModal({ product }) {
     const [visible, setVisible] = useState(false);
@@ -69,10 +71,30 @@ export function RemoveModal({ product }) {
         </div>
     );
 }
-function TableProduct({ products,show }) {
+function TableProduct({ products, show }) {
     const collator = useCollator({ numeric: true });
+    const [productList, setList] = useState(products.list)
+    const [filPro, setFilPro] = useState([])
+    const handleChangeFilPro = (e) => {
+        setFilPro(e)
+    }
+    const filterProduct = async () => {
+        let arr = products.list
+        if (filPro.length > 0) {
+            arr = filter(arr, {
+                keywords: `state:=${filPro}`
+            })
+            if (arr.length >= 0) {
+                setList(arr)
+            }
+        }
+    }
+    const resetFilter = async () => {
+        setFilPro([])
+        setList(products.list)
+    }
     async function load() {
-        return { items: products.list }
+        return { items: productList }
     }
     async function sort({ items, sortDescriptor }) {
         return {
@@ -87,7 +109,10 @@ function TableProduct({ products,show }) {
             }),
         };
     }
-    const list = useAsyncList({ load, sort });
+    let list = useAsyncList({ load, sort });
+    useEffect(() => {
+        list.reload()
+    }, [productList])
     let navigate = useNavigate()
     const formatPrice = (value) =>
         new Intl.NumberFormat('vi-VN', {
@@ -102,18 +127,74 @@ function TableProduct({ products,show }) {
         <div hidden={show} id='product'>
             <Row justify='space-between' align='center' css={{ marginTop: '$5', marginBottom: '$5' }}>
                 <Text b size={20}>SẢN PHẨM</Text>
-                <div style={{display:'flex',alignItems:'center'}}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                     <CSVLink
                         data={products.list}
                         filename={"products.csv"}
                         className="btn btn-primary"
                         target="_blank"
-                        style={{marginRight:10}}
+                        style={{ marginRight: 10 }}
                     >
                         Xuất CSV
                     </CSVLink>
-                    <Button auto ghost color={'warning'} onClick={()=>navigate('/admin/addProduct')}>Thêm sản phẩm</Button>
+                    <Button auto ghost color={'warning'} onClick={() => navigate('/admin/addProduct')}>Thêm sản phẩm</Button>
                 </div>
+            </Row>
+            <Row justify='space-between' align='center' css={{ marginBottom: '$4' }}>
+                <Popover placement='bottom-left'>
+                    <Popover.Trigger>
+                        <Button auto light animated={false}>
+                            Lọc nhãn hàng
+                            <FilterAlt />
+                        </Button>
+                    </Popover.Trigger>
+                    <Popover.Content css={{ marginRight: '$0', width: '50%' }}>
+                        <Grid.Container
+                            css={{ borderRadius: "14px", padding: "$10" }}
+                        >
+                            <Row>
+                                <Checkbox.Group
+                                    label="Chọn trạng thái"
+                                    orientation="horizontal"
+                                    color="warning"
+                                    value={filPro}
+                                    onChange={handleChangeFilPro}
+                                >
+                                    <Checkbox css={{ textAlign: 'center' }} value="enable">Hiển thị</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="disable">Vô hiệu hoá</Checkbox>
+                                </Checkbox.Group>
+                            </Row>
+                            <Grid.Container justify="flex-end" alignContent="center" gap={1}>
+                                <Grid>
+                                    <Button size="sm" color="warning" onClick={filterProduct}>
+                                        Xem kết quả
+                                    </Button>
+
+                                </Grid>
+                                <Grid>
+                                    <Button size="sm" bordered color={'error'} onClick={resetFilter}>
+                                        Xoá bộ lọc
+                                    </Button>
+                                </Grid>
+                            </Grid.Container>
+
+                        </Grid.Container>
+                    </Popover.Content>
+                </Popover>
+                <Row justify='flex-end' align='center'>
+                    {filPro.length > 0 ?
+                        <>
+                            <Text size={'$lg'} css={{ marginRight: '$2' }}>Lọc theo trạng thái: </Text>
+                            {filPro.map((state) => (
+                                <Button2 variant="outlined" color='inherit'>
+                                    {state === 'enable' ? "Hiển thị" : 'Vô hiệu hoá'}
+                                </Button2>
+                            ))}
+                        </>
+                        :
+                        <></>
+                    }
+                </Row>
             </Row>
             <Table
                 bordered
@@ -122,7 +203,7 @@ function TableProduct({ products,show }) {
                 aria-label="Orders table"
                 css={{
                     height: "calc($space$14 * 10)",
-                  minWidth: "100%",
+                    minWidth: "100%",
                 }}
                 selectionMode="single"
                 sortDescriptor={list.sortDescriptor}
@@ -142,23 +223,23 @@ function TableProduct({ products,show }) {
                     {(product) => (
                         <Table.Row key={product.id}>
                             <Table.Cell><User
-                                    squared
-                                    src={product.images[0].url}
-                                    name={product.name}
-                                /></Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{formatPrice(product.price)}</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{product.discount}%</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{product.categoryName}</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>{product.brandName}</Table.Cell>
-                            <Table.Cell css={{textAlign:'center'}}>
+                                squared
+                                src={product.images[0].url}
+                                name={product.name}
+                            /></Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>{formatPrice(product.price)}</Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>{product.discount}%</Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>{product.categoryName}</Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>{product.brandName}</Table.Cell>
+                            <Table.Cell css={{ textAlign: 'center' }}>
                                 <StyledBadge type={product.state}>{state[product.state]}</StyledBadge>
                             </Table.Cell>
-                            <Table.Cell css={{d:'flex',justifyContent:'center',h:'100%',alignItems:'center'}}>
+                            <Table.Cell css={{ d: 'flex', justifyContent: 'center', h: '100%', alignItems: 'center' }}>
                                 <Row align="center">
                                     <button onClick={() => {
-                                        if(product.state==='enable'){
+                                        if (product.state === 'enable') {
                                             navigate(`/admin/updateProduct/${product.id}`)
-                                        }else{
+                                        } else {
                                             toast.error('Vui lòng kích hoạt lại sản phẩm', {
                                                 position: "top-right",
                                                 autoClose: 3000,
@@ -180,7 +261,7 @@ function TableProduct({ products,show }) {
                     )}
                 </Table.Body>
                 <Table.Pagination
-                    total={Math.ceil(products.totalQuantity/5)}
+                    total={Math.ceil(productList.length / 5)}
                     loop
                     shadow
                     noMargin
@@ -188,7 +269,7 @@ function TableProduct({ products,show }) {
                     color={'warning'}
                     rowsPerPage={5}
                 />
-                
+
             </Table>
             <ToastContainer />
         </div>

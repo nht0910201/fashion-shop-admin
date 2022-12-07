@@ -10,7 +10,7 @@ import UpdateProduct from '../pages/Admin/Product/UpdateProduct';
 import LoginAdmin from '../pages/LoginAdmin';
 
 const publicRoutes = [
-    { path: config.routes.notFound, component: View404 },
+    // { path: config.routes.notFound, component: View404 },
     { path: config.routes.loginManage, component: LoginAdmin },
 ];
 

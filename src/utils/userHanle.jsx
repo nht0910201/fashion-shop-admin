@@ -60,20 +60,20 @@ export const getUserFromLocalStorage = () => {
     }
 }
 export const clearUserFromLocalStorage = () => {
-    const curId = JSON.parse(window.localStorage.getItem('accessToken'));
-    const curEmail = JSON.parse(window.localStorage.getItem('accessToken'));
-    const curName = JSON.parse(window.localStorage.getItem('accessToken'));
-    const curAvatar = JSON.parse(window.localStorage.getItem('accessToken'));
-    const curGender = JSON.parse(window.localStorage.getItem('accessToken'));
-    const curRole = JSON.parse(window.localStorage.getItem('accessToken'));
+    const curId = encryptStorage.getItem('id');
+    const curEmail = encryptStorage.getItem('email');
+    const curName = encryptStorage.getItem('name');
+    const curAvatar = encryptStorage.getItem('avatar');
+    const curGender = encryptStorage.getItem('gender');
+    const curRole = encryptStorage.getItem('role');
     if (curId && curEmail && curName && curAvatar && curGender && curRole) {
         // store access token in local storage
-        window.localStorage.removeItem('id');
-        window.localStorage.removeItem('email');
-        window.localStorage.removeItem('name');
-        window.localStorage.removeItem('avatar');
-        window.localStorage.removeItem('gender');
-        window.localStorage.removeItem('role');
+        encryptStorage.removeItem('id');
+        encryptStorage.removeItem('email');
+        encryptStorage.removeItem('name');
+        encryptStorage.removeItem('avatar');
+        encryptStorage.removeItem('gender');
+        encryptStorage.removeItem('role');
     } else {
         console.log("Clear user failed")
         // return null

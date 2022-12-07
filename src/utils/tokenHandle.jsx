@@ -29,7 +29,6 @@ export const getFromLocalStorage = () => {
 export const clearFromLocalStorage = () => {
     const curToken = JSON.parse(window.localStorage.getItem('accessToken'));
     if (curToken) {
-        // store access token in local storage
         window.localStorage.removeItem('accessToken');
     } else {
         console.log("Clear token failed")

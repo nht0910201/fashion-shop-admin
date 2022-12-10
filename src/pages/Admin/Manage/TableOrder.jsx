@@ -1,4 +1,4 @@
-import { FilterAlt, Visibility } from '@mui/icons-material';
+import { FilterAlt, LocalShipping, NoCrash, Visibility } from '@mui/icons-material';
 import {
     Button,
     Checkbox,
@@ -20,7 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
 import { getOrderByIDByAdmin } from '../../../services/AdminService';
 import { getDistrict, getProvince, getWard } from '../../../services/AuthService';
-import { cancelOrderByAdmin, confirmOrderByAdmin } from '../../../services/Payment';
+import { cancelOrderByAdmin, changeStateOrder, confirmOrderByAdmin, createShipping } from '../../../services/Payment';
 import { UpdateSuccessNavigate } from '../../../components/Alert/UpdateSuccessNavigate';
 import { UpdateError } from '../../../components/Alert/UpdateError';
 import { StyledBadge } from '../../MyOrder/StyledBadge';
@@ -81,12 +81,14 @@ export function OrderModal({ orderId }) {
             }
         }
         getWardAPI(+order.deliveryDetail?.receiveDistrict);
-    }, [order]);
+    }, [order.deliveryDetail?.receiveDistrict]);
     const confirmOrder = async () => {
         const wait = toast.loading('Vui lòng chờ ... !');
         let res = await confirmOrderByAdmin(orderId);
         if (res.success) {
             UpdateSuccessNavigate(wait, 'Xác nhận đơn hàng thành công', '/admin?page=order');
+        } else {
+            UpdateError(wait, 'Xác nhận đơn hàng không thành công');
         }
     };
     const handleConfirm = () => {
@@ -104,6 +106,43 @@ export function OrderModal({ orderId }) {
     };
     const handleCancel = () => {
         cancelOrder();
+    };
+    const deliverylOrder = async (data) => {
+        const wait = toast.loading('Vui lòng chờ ... !');
+        let res = await createShipping(orderId, data);
+        if (res.data.success) {
+            UpdateSuccessNavigate(wait, 'Tiến hành giao hàng thành công', '/admin?page=order');
+        } else {
+            UpdateError(wait, 'Tiến hành giao hàng không thành công');
+        }
+    };
+    const handleDelivery = () => {
+        let data = {
+            to_province_name:provinces.filter(province => {
+                return province.ProvinceID === +order.deliveryDetail?.receiveProvince
+                })[0]?.ProvinceName,
+            to_district_name: districts.filter(district => {
+                return district.DistrictID === +order.deliveryDetail?.receiveDistrict
+            })[0]?.DistrictName,
+            to_ward_name: wards.filter(ward => {
+                return ward.WardCode === order.deliveryDetail?.receiveWard
+            })[0]?.WardName,
+            items: order.items?.map(({name, quantity}) => ({name, quantity}))
+        }
+        deliverylOrder(data);
+    };
+
+    const changeStateOrder = async () => {
+        const wait = toast.loading('Vui lòng chờ ... !');
+        let res = await changeStateOrder(orderId, 'delivered');
+        if (res.success) {
+            UpdateSuccessNavigate(wait, 'Xác nhận đã giao hàng thành công', '/admin?page=order');
+        } else {
+            UpdateError(wait, 'Xác nhận đã giao hàng không thành công');
+        }
+    };
+    const handleChangeState = () => {
+        changeStateOrder();
     };
     return (
         <>
@@ -244,7 +283,7 @@ export function OrderModal({ orderId }) {
                                             <Text size={'$xl'} weight={'semibold'}>Phí vận chuyển:</Text>
                                         </Col>
                                         <Col>
-                                            <Text size={'$xl'}>Miễn phí</Text>
+                                            <Text size={'$xl'}>{formatPrice(order.deliveryDetail.deliveryInfo?.fee || 0)}</Text>
                                         </Col>
                                     </Row>
                                     <Divider />
@@ -253,7 +292,7 @@ export function OrderModal({ orderId }) {
                                             <Text size={'$3xl'} weight={'semibold'}>Tổng cộng:</Text>
                                         </Col>
                                         <Col>
-                                            <Text size={'$3xl'}>{formatPrice(order.totalPrice)}</Text>
+                                            <Text size={'$3xl'}>{formatPrice(order.totalPrice + order.deliveryDetail.deliveryInfo?.fee || order.totalPrice)}</Text>
                                         </Col>
                                     </Row>
                                 </Grid>
@@ -265,11 +304,23 @@ export function OrderModal({ orderId }) {
                                     <Button auto flat color="error" onClick={handleCancel}>
                                         Huỷ đơn hàng
                                     </Button>
-                                    <Button auto onClick={handleConfirm}>
-                                        Xác nhân đơn hàng
+                                    <Button auto color={'gradient'} onClick={handleConfirm}>
+                                        Xác nhận đơn hàng
                                     </Button>
                                 </>
-                            ) : (
+                            ) : order?.state === 'prepare' ? (
+                                <>
+                                    <Button auto color={'gradient'} onClick={handleDelivery}>
+                                         Giao hàng <LocalShipping sx={{ml: 1}}/>
+                                    </Button>
+                                </>
+                            ) : order?.state === 'delivery' ? (
+                                <>
+                                    <Button auto color={'gradient'} onClick={handleChangeState}>
+                                         Xác nhận giao hàng thành công <NoCrash sx={{ml: 1}}/>
+                                    </Button>
+                                </>
+                            ) :(
                                 <></>
                             )}
                         </Modal.Footer>
@@ -333,6 +384,8 @@ function TableOrder({ orders, show }) {
         process: 'Đang xử lý',
         pending: 'Đang chờ xác nhận',
         delivery: 'Đang giao hàng',
+        prepare: 'Đang chuẩn bị hàng',
+        delivered: 'Đã giao hàng',
         cancel: 'Đã hủy',
     };
     return (
@@ -406,7 +459,9 @@ function TableOrder({ orders, show }) {
                                             state === 'process' ? 'Đang xử lý':
                                                 state === 'pending' ? 'Đang chờ xác nhận':
                                                     state ==='delivery'?'Đang giao hàng':
-                                                        'Đã huỷ'}
+                                                        state ==='prepare'?'Đang chuẩn bị hàng':
+                                                            state ==='delivered'?'Đã giao hàng':
+                                                            'Đã huỷ'}
                                 </Button2>
                             ))}
                         </>

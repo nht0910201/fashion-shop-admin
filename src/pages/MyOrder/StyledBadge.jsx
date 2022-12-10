@@ -44,11 +44,19 @@ export const StyledBadge = styled('span', {
         bg: '$warningLight',
         color: '$warningLightContrast'
       },
+      prepare: {
+        bg: '$warningLight',
+        color: '$warningLightContrast'
+      },
       done: {
         bg: '$successLight',
         color: '$successLightContrast'
       },
       activated: {
+        bg: '$successLight',
+        color: '$successLightContrast'
+      },
+      delivered: {
         bg: '$successLight',
         color: '$successLightContrast'
       },

@@ -86,8 +86,10 @@ function Statistic({ stats, show }) {
                                         <Text size={"$md"}>
                                             {state.state === 'enable' ? 'Khởi tạo: ' :
                                                 state.state === 'delivery' ? 'Đang giao: ' :
+                                                state.state === 'delivered' ? 'Đã giao hàng: ' :
                                                     state.state === 'done' ? 'Hoàn thành: ' : 
                                                         state.state ==='pending' ? 'Chờ xác nhận: ':
+                                                        state.state ==='prepare' ? 'Đang chuẩn bị hàng: ':
                                                             state.state ==='process' ? 'Đang xử lý: ':
                                                                 'Đã huỷ: '}
                                         </Text>
@@ -95,8 +97,8 @@ function Statistic({ stats, show }) {
                                     </Row>
                                     <Progress
                                         value={state.count}
-                                        color={state.state === 'cancel' ? 'error' : state.state === 'delivery' ? 'primary' : state.state === 'done' ? 'success' : 'warning'}
-                                        status={state.state === 'cancel' ? 'error' : state.state === 'delivery' ? 'primary' : state.state === 'done' ? 'success' : 'warning'}
+                                        color={state.state === 'cancel' ? 'error' : state.state === 'delivery' ? 'primary' : state.state === 'done' || state.state === 'delivered' ? 'success' : 'warning'}
+                                        status={state.state === 'cancel' ? 'error' : state.state === 'delivery' ? 'primary' : state.state === 'done'|| state.state === 'delivered' ? 'success' : 'warning'}
                                         max={stats.order.totalQuantity}
                                     />
                                 </>

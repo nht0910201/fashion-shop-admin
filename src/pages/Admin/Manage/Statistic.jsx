@@ -194,8 +194,8 @@ function Statistic({ stats, show }) {
                             <option value="year">Năm</option>
                         </select>
                     </div>
-                    <Input underlined shadow={false} type={'date'} label='Từ ngày' value={from} onChange={handleChangeFrom} />
-                    <Input underlined shadow={false} type={'date'} label='Đến ngày' value={to} onChange={handleChangeTo} />
+                    <Input underlined shadow={false} type={'date'} label='Thời điểm bắt đầu' value={from} onChange={handleChangeFrom} />
+                    <Input underlined shadow={false} type={'date'} label='Thời điểm kết thúc' value={to} onChange={handleChangeTo} />
                     <Button disabled={(from === '' || to === '' || loading) ? true : false} css={{ marginTop: '$2' }} auto ghost color={'warning'} onClick={hanleClickStats}>Xem thống kê</Button>
                 </Row>
                 {loading ? <>

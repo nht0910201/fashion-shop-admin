@@ -97,7 +97,6 @@ export function OrderModal({ orderId }) {
     const cancelOrder = async () => {
         const wait = toast.loading('Vui lòng chờ ... !');
         let res = await cancelOrderByAdmin(orderId);
-        console.log(res);
         if (res.success) {
             UpdateSuccessNavigate(wait, 'Huỷ đơn hàng thành công', '/admin?page=order');
         } else {
@@ -411,7 +410,7 @@ function TableOrder({ orders, show }) {
                             <FilterAlt/>
                         </Button>
                     </Popover.Trigger>
-                    <Popover.Content css={{ marginRight: '$0', width: '75%' }}>
+                    <Popover.Content css={{ marginRight: '$0', width: '80%' }}>
                         <Grid.Container
                             css={{ borderRadius: "14px", padding: "$10" }}
                         >
@@ -427,6 +426,7 @@ function TableOrder({ orders, show }) {
                                     <Checkbox css={{ textAlign: 'center' }} value="done">Hoàn tất</Checkbox>
                                     <Checkbox css={{ textAlign: 'center' }} value="process">Đang xử lý</Checkbox>
                                     <Checkbox css={{ textAlign: 'center' }} value="pending">Đang chờ xác nhận</Checkbox>
+                                    <Checkbox css={{ textAlign: 'center' }} value="prepare">Đang chuẩn bị hàng</Checkbox>
                                     <Checkbox css={{ textAlign: 'center' }} value="delivery">Đang giao hàng</Checkbox>
                                     <Checkbox css={{ textAlign: 'center' }} value="cancel">Đã hủy</Checkbox>
                                 </Checkbox.Group>
@@ -519,12 +519,12 @@ function TableOrder({ orders, show }) {
                     )}
                 </Table.Body>
                 <Table.Pagination
-                    total={Math.ceil(orderList.length / 5)}
+                    total={Math.ceil(orderList.length / 10)}
                     shadow
                     noMargin
                     align="center"
                     color={'warning'}
-                    rowsPerPage={5}
+                    rowsPerPage={10}
                 />
             </Table>
         </span>

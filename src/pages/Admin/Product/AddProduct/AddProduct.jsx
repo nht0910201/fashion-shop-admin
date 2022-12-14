@@ -472,7 +472,7 @@ function AddProduct() {
                                         component="label"
                                         sx={{ borderRadius: 5 }}
                                     >
-                                        <Text size={16} color='blue'>Tải ảnh logo lên</Text>
+                                        <Text size={16} color='blue'>Tải ảnh phiên bản lên</Text>
                                         <FileUpload sx={{ marginLeft: 1 }} />
                                         <input
                                             type="file"
@@ -536,14 +536,14 @@ function AddProduct() {
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Button
                                 variant="contained"
-                                sx={{ mt: 3, ml: 1, backgroundColor: 'red' }}
+                                sx={{ mt: 3, ml: 1, backgroundColor: 'red',textTransform:'none' }}
                                 onClick={() => window.location.href = '/admin?page=product'}
                             >
                                 Xong
                             </Button>
                             <Button
                                 variant="contained"
-                                sx={{ mt: 3, ml: 1 }}
+                                sx={{ mt: 3, ml: 1,textTransform:'none' }}
                                 onClick={handleSave}
                             >
                                 Lưu

@@ -1,7 +1,7 @@
 import { Edit, FilterAlt } from '@mui/icons-material';
 import { Button, Row, Table, User, Modal, Text, Radio, Input, useAsyncList, useCollator, Popover, Grid, Checkbox } from '@nextui-org/react'
 import { useState } from 'react';
-import { addUserByAdmin, updateUserByAdmin } from '../../../services/AdminService';
+import { addUserByAdmin, getUsersByAdmin, updateUserByAdmin } from '../../../services/AdminService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UpdateError } from '../../../components/Alert/UpdateError';
@@ -73,8 +73,8 @@ export function AddModal() {
                 progress: undefined,
             });
         }
-        else if (password.length < 8) {
-            toast.error('Vui lòng nhập mật khẩu có ít nhất 8 kí tự', {
+        else if (password.length < 6) {
+            toast.error('Vui lòng nhập mật khẩu có ít nhất 6 kí tự', {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,

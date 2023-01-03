@@ -110,7 +110,7 @@ function SideBar() {
                         src={userCur.avatar}
                         bordered
                     />}>
-                        <Button onClick={handleLogout} light auto color={'warning'}>Đăng xuất</Button>
+                        <Button onClick={handleLogout} light auto color={'error'}>Đăng xuất</Button>
                     </Collapse>
                     <Collapse contentLeft={<BarChart/>} title="Thống kê">
                         <Button onClick={handleStatistic} light auto color={'warning'}>Xem thống kê</Button>

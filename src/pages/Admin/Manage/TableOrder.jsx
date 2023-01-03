@@ -131,7 +131,7 @@ export function OrderModal({ orderId }) {
         deliverylOrder(data);
     };
 
-    const changeStateOrder = async () => {
+    const handleStateOrder = async () => {
         const wait = toast.loading('Vui lòng chờ ... !');
         let res = await changeStateOrder(orderId, 'delivered');
         if (res.success) {
@@ -141,7 +141,7 @@ export function OrderModal({ orderId }) {
         }
     };
     const handleChangeState = () => {
-        changeStateOrder();
+        handleStateOrder();
     };
     return (
         <>

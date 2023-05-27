@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getCatgoriesByAdmin, getUsersByAdmin, getAllBrandsByAdmin, getProductsByAdmin, getOrdersByAdmin, getStatsByAdmin } from "../../../services/AdminService";
 import { getUserFromLocalStorage } from "../../../utils/userHanle";
+import ManagePrice from "./ManagePrice";
 import Statistic from "./Statistic";
 import TableBrand from "./TableBrand";
 import TableCategories from "./TableCategories";
@@ -76,6 +77,7 @@ function Admin() {
         </> : <>
           <TableUser users={users} show={url === 'user' ? false : true} />
           <TableProduct products={products} show={url === 'product' ? false : true} />
+          <ManagePrice products={products} show={url === 'managePrice' ? false : true}/>
           <TableCategories categories={categories} show={url === 'category' ? false : true} />
           <TableBrand brands={brands} show={url === 'brand' ? false : true} />
           <TableOrder orders={orders} show={url === 'order' ? false : true} />

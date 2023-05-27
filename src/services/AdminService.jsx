@@ -37,7 +37,7 @@ export const getBrandByAdmin = async (id)=>{
 }
 export const getProductsByAdmin = async (page) =>{
     try {
-        const response = await get(`/manage/products?size=20&page=${page}`);
+        const response = await get(`/manage/products?size=50&page=${page}`);
         return response
     } catch (error) { 
         return error.response.data 
@@ -148,6 +148,15 @@ export const updateProductByAdmin = async (data={},id) =>{
 export const updateAttrByAdmin = async (data={},id,oldName) =>{
     try {
         const response = await put(`/manage/products/attribute/${id}?name=${oldName}`,data);
+        return response
+    } catch (error) { 
+        return error.response
+    };
+}
+export const updateProductPriceByAdmin = async (data={}) =>{
+    try {
+        const response = await put('/manage/products/price',data);
+        console.log(response)
         return response
     } catch (error) { 
         return error.response

@@ -10,12 +10,31 @@ function SideBar() {
     const handleProductManage = () => {
         let order = document.getElementById('order')
         let product = document.getElementById('product')
+        let managePrice = document.getElementById('managePrice')
         let user = document.getElementById('user')
         let category = document.getElementById('category');
         let brand = document.getElementById('brand');
         let stats = document.getElementById('stats')
         
         product.removeAttribute('hidden')
+        managePrice.setAttribute('hidden',true)
+        order.setAttribute('hidden', true)
+        user.setAttribute('hidden', true)
+        category.setAttribute('hidden', true)
+        brand.setAttribute('hidden', true)
+        stats.setAttribute('hidden',true)
+    }
+    const handleProductManagePrice = () => {
+        let order = document.getElementById('order')
+        let product = document.getElementById('product')
+        let managePrice = document.getElementById('managePrice')
+        let user = document.getElementById('user')
+        let category = document.getElementById('category');
+        let brand = document.getElementById('brand');
+        let stats = document.getElementById('stats')
+        
+        managePrice.removeAttribute('hidden')
+        product.setAttribute('hidden',true)
         order.setAttribute('hidden', true)
         user.setAttribute('hidden', true)
         category.setAttribute('hidden', true)
@@ -25,6 +44,7 @@ function SideBar() {
     const handleUserManage = () => {
         let user = document.getElementById('user')
         let product = document.getElementById('product')
+        let managePrice = document.getElementById('managePrice')
         let category = document.getElementById('category');
         let brand = document.getElementById('brand');
         let order = document.getElementById('order')
@@ -32,6 +52,7 @@ function SideBar() {
 
         user.removeAttribute('hidden')
         product.setAttribute('hidden', true)
+        managePrice.setAttribute('hidden',true)
         category.setAttribute('hidden', true)
         brand.setAttribute('hidden', true)
         order.setAttribute('hidden', true)
@@ -40,6 +61,7 @@ function SideBar() {
     const handleCategoryManage = () => {
         let user = document.getElementById('user')
         let product = document.getElementById('product')
+        let managePrice = document.getElementById('managePrice')
         let category = document.getElementById('category');
         let brand = document.getElementById('brand');
         let order = document.getElementById('order')
@@ -47,6 +69,7 @@ function SideBar() {
 
         category.removeAttribute('hidden')
         product.setAttribute('hidden', true)
+        managePrice.setAttribute('hidden',true)
         user.setAttribute('hidden', true)
         brand.setAttribute('hidden', true)
         order.setAttribute('hidden', true)
@@ -55,6 +78,7 @@ function SideBar() {
     const handleBrandManage = () => {
         let user = document.getElementById('user')
         let product = document.getElementById('product')
+        let managePrice = document.getElementById('managePrice')
         let stats = document.getElementById('stats')
         let category = document.getElementById('category');
         let brand = document.getElementById('brand');
@@ -62,6 +86,7 @@ function SideBar() {
 
         brand.removeAttribute('hidden')
         product.setAttribute('hidden', true)
+        managePrice.setAttribute('hidden',true)
         user.setAttribute('hidden', true)
         category.setAttribute('hidden', true)
         order.setAttribute('hidden', true)
@@ -70,6 +95,7 @@ function SideBar() {
     const handleOrderManage = () => {
         let user = document.getElementById('user')
         let product = document.getElementById('product')
+        let managePrice = document.getElementById('managePrice')
         let stats = document.getElementById('stats')
         let category = document.getElementById('category');
         let brand = document.getElementById('brand');
@@ -77,6 +103,7 @@ function SideBar() {
 
         order.removeAttribute('hidden')
         product.setAttribute('hidden', true)
+        managePrice.setAttribute('hidden',true)
         stats.setAttribute('hidden',true)
         user.setAttribute('hidden', true)
         category.setAttribute('hidden', true)
@@ -85,6 +112,7 @@ function SideBar() {
     const handleStatistic = () => {
         let user = document.getElementById('user')
         let product = document.getElementById('product')
+        let managePrice = document.getElementById('managePrice')
         let stats = document.getElementById('stats')
         let category = document.getElementById('category');
         let brand = document.getElementById('brand');
@@ -92,6 +120,7 @@ function SideBar() {
 
         stats.removeAttribute('hidden')
         product.setAttribute('hidden', true)
+        managePrice.setAttribute('hidden',true)
         order.setAttribute('hidden',true)
         user.setAttribute('hidden', true)
         category.setAttribute('hidden', true)
@@ -120,6 +149,7 @@ function SideBar() {
                     </Collapse>
                     <Collapse contentLeft={<Inventory/>} title="Sản phẩm">
                         <Button onClick={handleProductManage} light auto color={'warning'}>Quản lý sản phẩm </Button>
+                        <Button onClick={handleProductManagePrice} light auto color={'warning'}>Quản lý giá sản phẩm </Button>
                     </Collapse>
                     <Collapse contentLeft={<Category/>} title="Danh mục">
                         <Button onClick={handleCategoryManage} light auto color={'warning'}>Quản lý danh mục </Button>

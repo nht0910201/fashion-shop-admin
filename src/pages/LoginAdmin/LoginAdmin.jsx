@@ -74,7 +74,7 @@ function LoginAdmin() {
                     sm={4}
                     md={7}
                     sx={{
-                        backgroundImage: 'url(	https://www.grati.works/images/auth_background.png)',
+                        backgroundImage: 'url(https://cdn3.f-cdn.com/contestentries/1733723/42113248/5e47d289f1335_thumb900.jpg)',
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) =>
                             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
